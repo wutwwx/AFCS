@@ -33,4 +33,26 @@ For algorithms and hydrodynamic modeling, you may also refer to:
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 
-For questions, suggestions, or contributions, please open an issue or contact Wenxiang Wu (wuwenxiang@whut.edu.cn).
+
+## Authors & Acknowledgements
+
+This toolbox is developed and maintained by:
+
+- Wenxiang Wu (Wuhan University of Technology)
+- Chenguang Liu (Wuhan University of Technology)
+- Zhibo He (Wuhan University of Technology)
+- Huimin Chen (Wuhan University of Technology)
+- Wenzhou Yan (Wuhan University of Technology)
+- Chenguang Wang (Wuhan University of Technology)
+- Bo Liu (Wuhan University of Technology)
+- Haihong Wang (Wuhan University of Technology)
+- Xiumin Chu (Wuhan University of Technology)
+
+Special thanks to Prof. Liu for guidance and to all early users who provided feedback.
+
+## Feedback & Contribution
+
+- Bug reports, feature requests, or code improvements are welcome.
+- Please submit issues via [GitHub Issues](https://github.com/whutwwx/SFCT-A-toolbox-for-ship-formation-control-toolbox-in-Matlab/issues).
+- For major code contributions, please create a pull request and briefly describe your changes.
+
