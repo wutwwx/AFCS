@@ -1,4 +1,4 @@
-function displayShip(shipName, dynamics, figNumber)
+function displayShip(shipName, dynamics, Number)
 %DISPLAYSHIP   Display information and an image for a given ship in a dedicated figure.
 %
 %   displayShip(shipName, dynamics, figNumber)
@@ -18,14 +18,14 @@ function displayShip(shipName, dynamics, figNumber)
 %   Date:   2025-02-19
 
     % Create or activate the designated figure, then clear it
-    hFig = figure(figNumber);
+    hFig = figure(Number);
     clf(hFig);
-    set(hFig, 'NumberTitle','off', 'Name',['Ship Info: ' char(shipName)]);
+    set(hFig, 'NumberTitle','off', 'Name',sprintf('Ship %d: %s', Number, shipName));
     
     % Title and image file selection
     switch shipName
         case "Yunfan1"
-            Heading = sprintf('%-30s\n%-30s\n',  'Renjiantianjin');
+            Heading = sprintf('%-30s\n%-30s\n',  'Yunfan1');
             imageFile='yunfan1.jpg';
         case "Cybership2"
             Heading = sprintf('%-30s\n%-30s\n',  'Cybership2');
