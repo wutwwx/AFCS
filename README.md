@@ -1,6 +1,6 @@
 # AFCS (ASV Formation Control Simulator)
 
-**AFCS** is a modular MATLAB toolbox for multi-ASV formation control, trajectory generation, and robust obstacle avoidance in various marine environments. It provides ASV dynamics models, environment simulation (wind, waves, currents, static/dynamic obstacles), and distributed/decentralized control algorithms (including MPC, ADMM, graph-based strategies, etc.) for academic research, teaching, and engineering applications.
+**AFCS** is a modular MATLAB simulator for multi-ASV formation control, trajectory generation, and robust obstacle avoidance in various marine environments. It provides ASV dynamics models, environment simulation (wind, waves, currents, static/dynamic obstacles), and distributed/decentralized control algorithms (including MPC, ADMM, graph-based strategies, etc.) for academic research, teaching, and engineering applications.
 
 ## Main Features
 
@@ -13,7 +13,7 @@
 
 ## Citation
 
-If you use this toolbox for academic work, please cite:
+If you use this simulator for academic work, please cite:
 
 
 For algorithms and hydrodynamic modeling, you may also refer to:
@@ -36,7 +36,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Authors & Acknowledgements
 
-This toolbox is developed and maintained by:
+This simulator is developed and maintained by:
 
 - Wenxiang Wu (Wuhan University of Technology)
 - Chenguang Liu (Wuhan University of Technology)
