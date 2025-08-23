@@ -1,13 +1,13 @@
 function axisLimit= getAxisLimit(SystemStates, TarTra, EnvironStates)
-%GETAXISLIMIT   Compute axis limits for plotting ship formation and obstacle scenarios.
+%GETAXISLIMIT   Compute axis limits for plotting ASV formation and obstacle scenarios.
 %
 %   axisLimit = getAxisLimit(SystemStates, TarTra, EnvironStates) automatically
-%   determines the x/y axis bounds for 2D plotting by scanning all relevant ship 
+%   determines the x/y axis bounds for 2D plotting by scanning all relevant ASV 
 %   trajectories, targets, and obstacle points. Adds a small margin for visibility.
 %
 %   Inputs:
 %     SystemStates   - Cell array, each cell contains a struct with .realStates (N×3 or N×6)
-%     TarTra         - Array or cell array of reference trajectories, e.g. [N×3] or {ship1Tra, ...}
+%     TarTra         - Array or cell array of reference trajectories, e.g. [N×3] or {ASV1Tra, ...}
 %     EnvironStates  - Struct, can include:
 %                         .manual_dynamic.TS: cell, each contains .Pos (N×2) for dynamic obstacles
 %                         .staticObs: cell, each contains .Pos (polygon points) for static obs
@@ -24,7 +24,7 @@ function axisLimit= getAxisLimit(SystemStates, TarTra, EnvironStates)
 
 x_all = []; y_all = [];
 
-% 1. Ship target trajectories  
+% 1. ASV target trajectories  
 if nargin > 1 && ~isempty(TarTra)
     if iscell(TarTra)
         for jj = 1:length(TarTra)
@@ -37,7 +37,7 @@ if nargin > 1 && ~isempty(TarTra)
     end
 end
 
-% 2. Actual ship trajectories  
+% 2. Actual ASV trajectories  
 for jj = 1:length(SystemStates)
     xi = SystemStates{jj}.realStates;
     x_all = [x_all; xi(:,2)];
@@ -46,10 +46,10 @@ end
 
 % 3. Dynamic obstacle trajectories  
 if nargin > 2 && isfield(EnvironStates, "manual_dynamic") && isfield(EnvironStates.manual_dynamic, "TS")
-    dynShips = EnvironStates.manual_dynamic.TS;
-    for k = 1:numel(dynShips)
-        x_all = [x_all; dynShips{k}.Pos(:,2)];
-        y_all = [y_all; dynShips{k}.Pos(:,1)];
+    dynASVs = EnvironStates.manual_dynamic.TS;
+    for k = 1:numel(dynASVs)
+        x_all = [x_all; dynASVs{k}.Pos(:,2)];
+        y_all = [y_all; dynASVs{k}.Pos(:,1)];
     end
 end
 
