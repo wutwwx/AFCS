@@ -1,12 +1,12 @@
-function xdot = PreDynamicsModel(ship,xi,ui,disturbance) 
-%PREDYNAMICSMODEL   Ship state propagation (3DOF/underactuated) for prediction/control.
+function xdot = PreDynamicsModel(ASV,xi,ui,disturbance) 
+%PREDYNAMICSMODEL   ASV state propagation (3DOF/underactuated) for prediction/control.
 %
-%   xdot = PreDynamicsModel(ship, xi, ui, disturbance)
-%   Computes the time derivative of ship state for use in prediction (e.g., in MPC),
+%   xdot = PreDynamicsModel(ASV, xi, ui, disturbance)
+%   Computes the time derivative of ASV state for use in prediction (e.g., in MPC),
 %   supporting both Fossen 3-DOF model (type==1) and MMG (Manoeuvring Mathematical Modelling Group) model (type==2).
 %
 %   Inputs:
-%     ship        - Struct, ship dynamic parameters (fields depend on .type)
+%     ASV        - Struct, ASV dynamic parameters (fields depend on .type)
 %     xi          - State vector at current step (6×1 for Fossen, 8×1 for MMG)
 %     ui          - Control input vector at current step
 %                   [tau_u, tau_v, tau_r] for Fossen; [delta_c, n_c] for MMG
@@ -16,11 +16,11 @@ function xdot = PreDynamicsModel(ship,xi,ui,disturbance)
 %     xdot        - State derivative vector (same dimension as xi)
 %
 %   Example usage:
-%     xdot = PreDynamicsModel(ship, xi, ui, disturbance)
+%     xdot = PreDynamicsModel(ASV, xi, ui, disturbance)
 %
 %   Reference:
 %     [1] Fossen, T. I., "Guidance and Control of Ocean Vehicles", Wiley, 1994.
-%     [2] Yasukawa, H., & Yoshimura, Y. Introduction of MMG standard method for ship maneuvering predictions.
+%     [2] Yasukawa, H., & Yoshimura, Y. Introduction of MMG standard method for ASV maneuvering predictions.
 %        Journal of Marine Science and Technology, 2015 Mar;20:37-52.
 
 %   Author: Wenxiang Wu
@@ -28,9 +28,9 @@ function xdot = PreDynamicsModel(ship,xi,ui,disturbance)
 
     c_v=disturbance.current';
     d_w=disturbance.force';
-if ship.type==1    
-    m11=ship.m11; m22=ship.m22; m23=ship.m23; m32=ship.m32; m33=ship.m33; Xu=ship.Xu; Xuu=ship.Xuu; Xuuu=ship.Xuuu;Yv=ship.Yv; Yvv=ship.Yvv;
-    Yr=ship.Yr; Yrv=ship.Yrv; Yvr=ship.Yvr; Yrr=ship.Yrr; Nv=ship.Nv; Nvv=ship.Nvv; Nr=ship.Nr; Nrv=ship.Nrv; Nvr=ship.Nvr; Nrr=ship.Nrr;%水动力参数
+if ASV.type==1    
+    m11=ASV.m11; m22=ASV.m22; m23=ASV.m23; m32=ASV.m32; m33=ASV.m33; Xu=ASV.Xu; Xuu=ASV.Xuu; Xuuu=ASV.Xuuu;Yv=ASV.Yv; Yvv=ASV.Yvv;
+    Yr=ASV.Yr; Yrv=ASV.Yrv; Yvr=ASV.Yvr; Yrr=ASV.Yrr; Nv=ASV.Nv; Nvv=ASV.Nvv; Nr=ASV.Nr; Nrv=ASV.Nrv; Nvr=ASV.Nvr; Nrr=ASV.Nrr;%水动力参数
     phi = xi(3);  % phi
     U(1,1) = xi(4);
     U(2,1) = xi(5);
@@ -64,12 +64,12 @@ if ship.type==1
     xdot_1=R*U+c_v;
     xdot_2=M^(-1)*(ui-C_U*U-D_U*U+d_w);
     xdot=[xdot_1;xdot_2];
-elseif ship.type==2
+elseif ASV.type==2
     U = sqrt(xi(4)^2 + xi(5)^2);
     if U < 0.01
         U = 0.01; % Prevent division by zero
     end
-    rho = ship.rho; L = ship.L; d = ship.d; delta_max = ship.delta_max; n_max = ship.n_max;
+    rho = ASV.rho; L = ASV.L; d = ASV.d; delta_max = ASV.delta_max; n_max = ASV.n_max;
     delta_c = ui(1); n_c = ui(2) * L / U;
     u = xi(4)/U; v = xi(5)/U; r = xi(6)*L/U; psi = xi(3); delta = xi(7); n = xi(8)*L/U;
     if u == 0
@@ -78,15 +78,15 @@ elseif ship.type==2
     if abs(n) < 1
        n = 1;
     end
-    m   = ship.m; mx  = ship.mx; my  = ship.my; Jzz = ship.Jzz; Izz = ship.Izz;
+    m   = ASV.m; mx  = ASV.mx; my  = ASV.my; Jzz = ASV.Jzz; Izz = ASV.Izz;
     % CFD coefficients
-    Xuu  = ship.Xuu;  Xvv  = ship.Xvv;  Xvr  = ship.Xvr;  Xrr  = ship.Xrr;  Yv = ship.Yv; Yr = ship.Yr;
-    Yvvv = ship.Yvvv; Yvvr = ship.Yvvr; Yvrr = ship.Yvrr; Yrrr = ship.Yrrr; Nv = ship.Nv; Nr = ship.Nr;
-    Nvvv = ship.Nvvv; Nvvr = ship.Nvvr; Nvrr = ship.Nvrr; Nrrr = ship.Nrrr;
+    Xuu  = ASV.Xuu;  Xvv  = ASV.Xvv;  Xvr  = ASV.Xvr;  Xrr  = ASV.Xrr;  Yv = ASV.Yv; Yr = ASV.Yr;
+    Yvvv = ASV.Yvvv; Yvvr = ASV.Yvvr; Yvrr = ASV.Yvrr; Yrrr = ASV.Yrrr; Nv = ASV.Nv; Nr = ASV.Nr;
+    Nvvv = ASV.Nvvv; Nvvr = ASV.Nvvr; Nvrr = ASV.Nvrr; Nrrr = ASV.Nrrr;
     % Propeller and rudder coefficients
-    tR = ship.tR; aH = ship.aH; xH = ship.xH; xR = ship.xR; AR = ship.AR; Delta = ship.Delta; kk = ship.kk;
-    uP = ship.uP; tP = ship.tP; gammaR1 = ship.gammaR1; gammaR2 = ship.gammaR2; DP = ship.DP; lR = ship.lR;
-    eta = ship.eta; epsilon = ship.epsilon;
+    tR = ASV.tR; aH = ASV.aH; xH = ASV.xH; xR = ASV.xR; AR = ASV.AR; Delta = ASV.Delta; kk = ASV.kk;
+    uP = ASV.uP; tP = ASV.tP; gammaR1 = ASV.gammaR1; gammaR2 = ASV.gammaR2; DP = ASV.DP; lR = ASV.lR;
+    eta = ASV.eta; epsilon = ASV.epsilon;
     if abs(delta_c) >= delta_max
         delta_c = sign(delta_c) * delta_max;
     end
@@ -105,7 +105,7 @@ elseif ship.type==2
     if abs(n_c) >= n_max/60
         n_c = sign(n_c) * n_max/60;
     end
-    KT = ship.KT; J1 = ship.J1;
+    KT = ASV.KT; J1 = ASV.J1;
     n_dot = (n_c - n) ; 
     J2 = uP * U / (n * DP);
     if J1 ~= J2
