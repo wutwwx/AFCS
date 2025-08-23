@@ -1,14 +1,14 @@
-function  System= systemInitial(N,ships,env,conditions) 
-%SYSTEMINITIAL   Initialize multi-ship simulation system states and environment conditions.
+function  System= systemInitial(N,ASVs,env,conditions) 
+%SYSTEMINITIAL   Initialize multi-ASV simulation system states and environment conditions.
 %
-%   System = systemInitial(N, ships, env, conditions)
+%   System = systemInitial(N, ASVs, env, conditions)
 %   Initializes the state trajectory, command arrays, and all auxiliary states
 %   (such as disturbance, noise, and fault variables) for a given fleet and
 %   environmental scenario, including various uncertainties and fault modes.
 %
 %   Inputs:
 %     N           - Integer, total simulation steps
-%     ships       - Cell array, each ship's parameter struct (fields: .dynamics, .observer, .controller, etc.)
+%     ASVs       - Cell array, each ASV's parameter struct (fields: .dynamics, .observer, .controller, etc.)
 %     env         - Struct, environmental parameter fields (e.g., .winds, .waves, .currents, ...)
 %     conditions  - String/cell array, enabled environment/fault conditions (see below)
 %
@@ -19,14 +19,14 @@ function  System= systemInitial(N,ships,env,conditions)
 %     "measureNoise"        - Add measurement noise
 %     "sensorFault"         - Enable sensor faults
 %     "actuatorFault"       - Enable actuator faults
-%     "communicationFault"  - Enable inter-ship communication faults
+%     "communicationFault"  - Enable inter-ASV communication faults
 %     "unknownDisturbance"  - Add unmodeled external disturbance (for robust/observer test)
 %
 %   Output:
-%     System      - Cell array, each ship's state struct with initialized arrays
+%     System      - Cell array, each ASV's state struct with initialized arrays
 %
 %   Example usage:
-%     System = systemInitial(N, ships, env, {"winds", "currents", "unknownDisturbance"});
+%     System = systemInitial(N, ASVs, env, {"winds", "currents", "unknownDisturbance"});
 %
 %   Note:
 %     - Cybership2 initial states and Yunfan1 (MMG) initial states are provided; uncomment as appropriate.
@@ -35,13 +35,13 @@ function  System= systemInitial(N,ships,env,conditions)
 %   Author: Wenxiang Wu
 %   Date:   2025-05-20
 
-shipNum=length(ships);
-System = cell(1, shipNum);
-for j=1:shipNum
-    Nx(1,j)=ships{j}.dynamics.Nx;
-    Nu(1,j)=ships{j}.dynamics.Nu;
+ASVNum=length(ASVs);
+System = cell(1, ASVNum);
+for j=1:ASVNum
+    Nx(1,j)=ASVs{j}.dynamics.Nx;
+    Nu(1,j)=ASVs{j}.dynamics.Nu;
 end
-for j=1:shipNum
+for j=1:ASVNum
     System{j}.realStates=zeros(N,Nx(1,j));
     System{j}.commands=zeros(N,Nu(1,j));   
 end
@@ -59,11 +59,11 @@ System{4}.realStates(1,:)=[-4,18.6,0,0,0,0];
 % System{4}.realStates(1,:)=[-4,18.6,0,0,0,0,0,1000/60];  
 
 
-if length(System)~=shipNum
-    error('Error: The setting initial states does not match the number of ships ');
+if length(System)~=ASVNum
+    error('Error: The setting initial states does not match the number of ASVs ');
 end
-for j=1:shipNum
-    if isfield(ships{j},'observer')
+for j=1:ASVNum
+    if isfield(ASVs{j},'observer')
         System{j}.obserStates=[];
     end
     System{j}.controlStates=[];
@@ -76,30 +76,30 @@ if ~isempty(conditions)
         error('Error: The following conditions are not allowed: %s', strjoin(invalid_conditions, ', '));
     end
 
-    for j=1:shipNum
-    if length(System{j}.realStates(1,:))~=ships{j}.dynamics.Nx
-        error(['The dimension of the initialized state of ' num2str(j) 'th ship is different from the its model state dimension']);
+    for j=1:ASVNum
+    if length(System{j}.realStates(1,:))~=ASVs{j}.dynamics.Nx
+        error(['The dimension of the initialized state of ' num2str(j) 'th ASV is different from the its model state dimension']);
     end
     end
 
     realStatesNow=System{1}.realStates(1,:);
     commandsNow=System{1}.commands(1,:);
-    for j=2:shipNum
+    for j=2:ASVNum
         realStatesNow(end+1, :)=System{j}.realStates(1,:);
         commandsNow(end+1, :)=System{j}.commands(1,:);
     end
 
     if ismember("unknownDisturbance", conditions)==true
-        UnDis=unknownDisturbance(shipNum,realStatesNow,0);
-        for j=1:shipNum
+        UnDis=unknownDisturbance(ASVNum,realStatesNow,0);
+        for j=1:ASVNum
             System{j}.UnDis=zeros(N,3);
             System{j}.UnDis(1,:)=UnDis{j};
         end
     end
 
     if ismember("winds", conditions)==true
-        winds=windsSet(ships,env.winds,realStatesNow,'blendermann',0);
-        for j=1:shipNum
+        winds=windsSet(ASVs,env.winds,realStatesNow,'blendermann',0);
+        for j=1:ASVNum
             System{j}.winds.force=zeros(N,3);
             System{j}.winds.speed=zeros(N,1);
             System{j}.winds.angle=zeros(N,1);
@@ -110,8 +110,8 @@ if ~isempty(conditions)
     end
 
     if ismember("waves", conditions)==true
-        waves=wavesSet(ships,env.waves,realStatesNow,0);
-        for j=1:shipNum
+        waves=wavesSet(ASVs,env.waves,realStatesNow,0);
+        for j=1:ASVNum
             System{j}.waves.force=zeros(N,3);
             System{j}.waves.angle=zeros(N,1);
             System{j}.waves.force(1,:)=waves{j}.force;
@@ -124,8 +124,8 @@ if ~isempty(conditions)
     end
 
     if ismember("currents", conditions)==true
-        currents=currentsSet(shipNum,env.currents,realStatesNow,0);
-        for j=1:shipNum
+        currents=currentsSet(ASVNum,env.currents,realStatesNow,0);
+        for j=1:ASVNum
             System{j}.currents.earthSpeed=zeros(N,3);
             System{j}.currents.bodySpeed=zeros(N,3);
             System{j}.currents.earthSpeed(1,:)=currents{j}.earthSpeed;
@@ -138,17 +138,17 @@ if ~isempty(conditions)
 
 
 
-   % Whether each ship has faults, observation, or control should be determined within subfunctions;  
+   % Whether each ASV has faults, observation, or control should be determined within subfunctions;  
    % Corresponding variables are initialized only if they exist—otherwise, the variables are not created  
-    senNoise=cell(1,shipNum);
-    sensors=cell(1,shipNum);
+    senNoise=cell(1,ASVNum);
+    sensors=cell(1,ASVNum);
     if ismember("measureNoise", conditions)==true 
-        senNoise=senNoi(shipNum,Nx,N);
+        senNoise=senNoi(ASVNum,Nx,N);
     end
     if ismember("sensorFault", conditions)==true
-        sensors=senFau(shipNum,Nx,realStatesNow,0);
+        sensors=senFau(ASVNum,Nx,realStatesNow,0);
     end
-    for j=1:shipNum
+    for j=1:ASVNum
         if ismember("measureNoise", conditions)==true
             System{j}.measStates=zeros(N,Nx(1,j));
             System{j}.measNoise=senNoise{j};
@@ -172,10 +172,10 @@ if ~isempty(conditions)
         end    
     end
 
-    actuators=cell(1,shipNum);
+    actuators=cell(1,ASVNum);
     if ismember("actuatorFault", conditions)==true        
-        actuators=actFau(shipNum,Nu,commandsNow,0);
-        for j=1:shipNum
+        actuators=actFau(ASVNum,Nu,commandsNow,0);
+        for j=1:ASVNum
             if ~isempty(actuators{j})
                 System{j}.realInputs=zeros(N,Nu(1,j));
                 System{j}.actStates=zeros(N,Nu(1,j));
@@ -189,17 +189,17 @@ if ~isempty(conditions)
     end
 
     if ismember("communicationFault", conditions)==true
-        if shipNum<2
-            error('Inter-ship communication cannot be set for a single ship');
+        if ASVNum<2
+            error('Inter-ASV communication cannot be set for a single ASV');
         end
-        communications=comFau(shipNum,realStatesNow,0);
-        for j=1:shipNum   
-            System{j}.comRelSta=cell(1, shipNum);
-            System{j}.comStates=zeros(N,shipNum);
+        communications=comFau(ASVNum,realStatesNow,0);
+        for j=1:ASVNum   
+            System{j}.comRelSta=cell(1, ASVNum);
+            System{j}.comStates=zeros(N,ASVNum);
             System{j}.comStates(1,:)=communications{j}.states;        
-            System{j}.comDelays=zeros(N,shipNum);
+            System{j}.comDelays=zeros(N,ASVNum);
             System{j}.comDelays(1,:)=communications{j}.delays;
-            for i=1:shipNum    % Transmission content can be customized    
+            for i=1:ASVNum    % Transmission content can be customized    
                 System{j}.comRelSta{i}=zeros(N,Nx(i));
                 System{j}.comRelSta{i}(1,:)=System{i}.realStates(1,:);         
             end
