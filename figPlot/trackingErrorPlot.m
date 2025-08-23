@@ -1,13 +1,13 @@
 function trackingErrorPlot(TarTra, SystemStates, N, plotParas)
-%TRACKINGERRORPLOT  Plot trajectory tracking errors (distance & heading) for ship formations.
+%TRACKINGERRORPLOT  Plot trajectory tracking errors (distance & heading) for ASV formations.
 %
 %   trackingErrorPlot(TarTra, SystemStates, N, plotParas)
 %   generates plots of Euclidean distance and heading (angle) tracking errors 
-%   for each ship in the formation, across all time steps.
+%   for each ASV in the formation, across all time steps.
 %
 %   Inputs:
-%     TarTra        - Cell array, TarTra{j} [N×3], target trajectory for each ship
-%     SystemStates  - Cell array, SystemStates{j}.realStates [N×3], actual state for each ship
+%     TarTra        - Cell array, TarTra{j} [N×3], target trajectory for each ASV
+%     SystemStates  - Cell array, SystemStates{j}.realStates [N×3], actual state for each ASV
 %     N             - Integer, total number of time steps to plot
 %     plotParas     - Struct, plotting parameters (colors, etc.)
 %
@@ -21,7 +21,7 @@ function trackingErrorPlot(TarTra, SystemStates, N, plotParas)
 %   Date:   2025-06-22
 
 colors = plotParas.colors;
-ShipNum = length(SystemStates);
+ASVNum = length(SystemStates);
 linestyles = {'-', '--', ':', '-.', '-', '--', ':', '-.'}; % extensible
 
 figure('Name', 'Tracking Errors', 'Color', 'w'); % one window
@@ -33,16 +33,16 @@ title('Tracking Error (Euclidean Distance) vs. Time');
 xlabel('Time Step', 'FontName', 'Times New Roman');
 ylabel('Tracking Error (m)', 'FontName', 'Times New Roman');
 set(gca, 'FontName', 'Times New Roman');
-linesE = gobjects(ShipNum,1);
-for j = 1:ShipNum
+linesE = gobjects(ASVNum,1);
+for j = 1:ASVNum
     xi = SystemStates{j}.realStates;
     xd = TarTra{j};
     err = sqrt((xi(1:N,1) - xd(1:N,1)).^2 + (xi(1:N,2) - xd(1:N,2)).^2);
     linesE(j) = plot(1:N, err, ...
-        'Color', colors.ship{j}, ...
+        'Color', colors.ASV{j}, ...
         'LineStyle', linestyles{mod(j-1,length(linestyles))+1}, ...
         'LineWidth', 2, ...
-        'DisplayName', ['Ship ', num2str(j)]);
+        'DisplayName', ['ASV ', num2str(j)]);
 end
 legend(linesE, 'Location', 'best');
 
@@ -52,16 +52,16 @@ title('Heading Error vs. Time');
 xlabel('Time Step', 'FontName', 'Times New Roman');
 ylabel('Heading Error (deg)', 'FontName', 'Times New Roman');
 set(gca, 'FontName', 'Times New Roman');
-linesH = gobjects(ShipNum,1);
-for j = 1:ShipNum
+linesH = gobjects(ASVNum,1);
+for j = 1:ASVNum
     xi = SystemStates{j}.realStates;
     xd = TarTra{j};
     psi_e = rad2deg( wrapToPi( xi(1:N,3) - xd(1:N,3) ) );
     linesH(j) = plot(1:N, psi_e, ...
-        'Color', colors.ship{j}, ...
+        'Color', colors.ASV{j}, ...
         'LineStyle', linestyles{mod(j-1,length(linestyles))+1}, ...
         'LineWidth', 2, ...
-        'DisplayName', ['Ship ', num2str(j)]);
+        'DisplayName', ['ASV ', num2str(j)]);
 end
 legend(linesH, 'Location', 'best');
 
