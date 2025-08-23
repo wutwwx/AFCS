@@ -11,10 +11,10 @@ function observePlot(SystemStates, N, colors)
 %                      .observer     : struct (optional), with field:
 %                         .UnDis     : [N × D] estimated disturbance
 %     N            - Integer, number of time steps to plot
-%     colors       - Struct, colors for each vessel: colors.ship{j}
+%     colors       - Struct, colors for each vessel: colors.ASV{j}
 %
 %   Output:
-%     None (plots figures for each ship with disturbance and estimation curves)
+%     None (plots figures for each ASV with disturbance and estimation curves)
 %
 %   Example:
 %     observePlot(SystemStates, N, plotParas.colors);
@@ -22,11 +22,11 @@ function observePlot(SystemStates, N, colors)
 %   Author: Wenxiang Wu (with ChatGPT enhancement)
 %   Date:   2025-06-20
 
-ShipNum = length(SystemStates);
-for j = 1:ShipNum
+ASVNum = length(SystemStates);
+for j = 1:ASVNum
    % Check whether the 'observer' field is included   
     if isfield(SystemStates{j}, 'observer') && ~isempty(SystemStates{j}.observer)
-        figure('Name', ['Ship ' num2str(j) ' Disturbance Observation'], 'NumberTitle', 'off');
+        figure('Name', ['ASV ' num2str(j) ' Disturbance Observation'], 'NumberTitle', 'off');
 
         % Get the disturbance dimension  
         dim = size(SystemStates{j}.UnDis, 2);
@@ -37,7 +37,7 @@ for j = 1:ShipNum
 
             % Real disturbance and estimated disturbance curves  
             plot(SystemStates{j}.UnDis(1:N, i), 'k', 'LineWidth', 2);
-            plot(SystemStates{j}.observer.UnDis(1:N, i), '--', 'Color', colors.ship{j}, 'LineWidth', 2);
+            plot(SystemStates{j}.observer.UnDis(1:N, i), '--', 'Color', colors.ASV{j}, 'LineWidth', 2);
 
             % Add legend and title 
             legend({'True Disturbance', 'Estimated Disturbance'});
