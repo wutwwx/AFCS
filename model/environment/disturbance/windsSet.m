@@ -1,13 +1,13 @@
-function Winds = windsSet(ships, winds, nowStates,  modelType , t)
-%WINDSSET   Calculate wind disturbance forces for ship(s), supporting Isherwood (1972) and Blendermann (1994).
+function Winds = windsSet(ASVs, winds, nowStates,  modelType , t)
+%WINDSSET   Calculate wind disturbance forces for ASV(s), supporting Isherwood (1972) and Blendermann (1994).
 %
-%   Winds = windsSet(ships, winds, nowStates, t, modelType)
+%   Winds = windsSet(ASVs, winds, nowStates, t, modelType)
 %   Inputs:
-%     ships      : Cell array of ship parameter structures (with .dynamics field)
+%     ASVs      : Cell array of ASV parameter structures (with .dynamics field)
 %     winds      : Structure with fields:
 %                   - speed : wind speed (m/s) (optional; default = 2)
 %                   - angle : wind direction, radians (optional; default = pi/3)
-%     nowStates  : [n_ships × state_dim] matrix, each row is the state vector of a ship
+%     nowStates  : [n_ASVs × state_dim] matrix, each row is the state vector of a ASV
 %     t          : Current simulation time (s)
 %     modelType  : (optional) 'isherwood' (default) or 'blendermann'
 %
@@ -18,13 +18,13 @@ function Winds = windsSet(ships, winds, nowStates,  modelType , t)
 %                   - angle  : wind direction used (rad)
 %
 %   References:
-%     [1] Isherwood RM, "Wind Resistance of Merchant Ships." Trans. RINA. 1973;115:327-38.
-%     [2] Blendermann W, "Parameter identification of wind loads on ships."
+%     [1] Isherwood RM, "Wind Resistance of Merchant ASVs." Trans. RINA. 1973;115:327-38.
+%     [2] Blendermann W, "Parameter identification of wind loads on ASVs."
 %     Journal of Wind Engineering and Industrial Aerodynamics. 1994 May 1;51(3):339-51.
 
 %
 %   Example:
-%     Winds = windsSet(ships, winds, nowStates, t, 'blendermann');
+%     Winds = windsSet(ASVs, winds, nowStates, t, 'blendermann');
 %
 %   Author: Wenxiang Wu (with ChatGPT enhancement)
 %   Date:   2025-03-20
@@ -41,47 +41,47 @@ else
     angle_w = winds.angle;
 end
 
-Winds = cell(1, length(ships));
+Winds = cell(1, length(ASVs));
 rho_a = 1.225;
 
 uwindN = windspeed * cos(angle_w + pi);
 uwindE = windspeed * sin(angle_w + pi);
 
-for j = 1:length(ships)
+for j = 1:length(ASVs)
     psi = nowStates(j,3);
-    u_ship = nowStates(j,4);
-    v_ship = nowStates(j,5);
-    UN = cos(psi)*u_ship - sin(psi)*v_ship;
-    UE = sin(psi)*u_ship + cos(psi)*v_ship;
+    u_ASV = nowStates(j,4);
+    v_ASV = nowStates(j,5);
+    UN = cos(psi)*u_ASV - sin(psi)*v_ASV;
+    UE = sin(psi)*u_ASV + cos(psi)*v_ASV;
     V_r = sqrt((uwindN - UN)^2 + (uwindE - UE)^2);
 
     gamma_r = mod(psi - angle_w, 2*pi);
     if gamma_r > pi, gamma_r = gamma_r - 2*pi; end
 
-    shipDyn = ships{j}.dynamics;
+    ASVDyn = ASVs{j}.dynamics;
 
     switch lower(modelType)
         case 'blendermann'
             % Blendermann (1994) wind load model
-            vessel_no = getfield_safe(shipDyn, 'vessel_no', 2);
-            ALw = getfield_safe(shipDyn, 'A_s', 6);
-            AFw = getfield_safe(shipDyn, 'A_f', 2);
-            sH  = getfield_safe(shipDyn, 'sH', 0.3);
-            sL  = getfield_safe(shipDyn, 'sL', 0.5);
-            Loa = getfield_safe(shipDyn, 'L', 5);
+            vessel_no = getfield_safe(ASVDyn, 'vessel_no', 2);
+            ALw = getfield_safe(ASVDyn, 'A_s', 6);
+            AFw = getfield_safe(ASVDyn, 'A_f', 2);
+            sH  = getfield_safe(ASVDyn, 'sH', 0.3);
+            sL  = getfield_safe(ASVDyn, 'sL', 0.5);
+            Loa = getfield_safe(ASVDyn, 'L', 5);
             [tau_w, ~, ~, ~, ~] = blendermann94(gamma_r, V_r, AFw, ALw, sH, sL, Loa, vessel_no);
             F_u = tau_w(1); F_v = tau_w(2); F_r = tau_w(3);
 
         case 'isherwood'
             % Isherwood (1972) wind load model
-            Loa  = getfield_safe(shipDyn, 'L', 5);
-            B    = getfield_safe(shipDyn, 'B', 1);
-            ALw  = getfield_safe(shipDyn, 'A_s', 6);
-            AFw  = getfield_safe(shipDyn, 'A_f', 2);
-            A_SS = getfield_safe(shipDyn, 'A_ss', 1);
-            S    = getfield_safe(shipDyn, 'C', 2);
-            Cval = getfield_safe(shipDyn, 'e', 1);
-            M    = getfield_safe(shipDyn, 'Mn', 0);
+            Loa  = getfield_safe(ASVDyn, 'L', 5);
+            B    = getfield_safe(ASVDyn, 'B', 1);
+            ALw  = getfield_safe(ASVDyn, 'A_s', 6);
+            AFw  = getfield_safe(ASVDyn, 'A_f', 2);
+            A_SS = getfield_safe(ASVDyn, 'A_ss', 1);
+            S    = getfield_safe(ASVDyn, 'C', 2);
+            Cval = getfield_safe(ASVDyn, 'e', 1);
+            M    = getfield_safe(ASVDyn, 'Mn', 0);
             [tau_w, ~, ~, ~] = isherwood72(gamma_r, V_r, Loa, B, ALw, AFw, A_SS, S, Cval, M);
             F_u = tau_w(1); F_v = tau_w(2); F_r = tau_w(3);
 
