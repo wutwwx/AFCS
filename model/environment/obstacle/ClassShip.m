@@ -1,12 +1,12 @@
-%CLASSSHIP   Ship object class for kinematic simulation and path tracking.
+%CLASSASV   ASV object class for kinematic simulation and path tracking.
 %
-%   This class defines a simple ship model for use in multi-vessel 
-%   navigation, encounter, and path tracking simulations. Each ship 
+%   This class defines a simple ASV model for use in multi-vessel 
+%   navigation, encounter, and path tracking simulations. Each ASV 
 %   object stores position, velocity, course, rudder and other key 
 %   properties, and provides methods to update state and trajectory.
 %
 %   Properties:
-%     length      : Ship length (default: 40 m)
+%     length      : ASV length (default: 40 m)
 %     speed       : Current speed (m/s)
 %     course      : Course angle (rad)
 %     heading     : Heading angle (rad)
@@ -22,21 +22,21 @@
 %     speeds      : History of speed [n×1]
 %
 %   Methods:
-%     ClassShip          : Constructor. Initializes with input vector.
+%     ClassASV          : Constructor. Initializes with input vector.
 %     ChangePosition     : Increment position by delta.
 %     MoveToNewPosition  : Move to absolute position (optionally set course).
 %     ChangeCourse       : Update course angle.
 %     EncounterSituation : Set encounter situation code.
 %
 %   Usage:
-%     ship = ClassShip([speed, course, length, yEast, xNorth]);
-%     ship = ship.ChangePosition([dy, dx]);
-%     ship = ship.MoveToNewPosition([yNew, xNew, courseNew]);
+%     ASV = ClassASV([speed, course, length, yEast, xNorth]);
+%     ASV = ASV.ChangePosition([dy, dx]);
+%     ASV = ASV.MoveToNewPosition([yNew, xNew, courseNew]);
 %
 %   Author: Zhibo He
 %   Date:   2025-03-01
-classdef ClassShip < handle
-    % This is a class named ship, only consists of speed
+classdef ClassASV < handle
+    % This is a class named ASV, only consists of speed
     % course, length, position
     properties
         length   = 1.5;
@@ -54,7 +54,7 @@ classdef ClassShip < handle
     end
 
     methods
-        function obj = ClassShip(InputMat)
+        function obj = ClassASV(InputMat)
             obj.speed    = InputMat(1);
             obj.course   = InputMat(2);
             obj.length   = InputMat(3);
