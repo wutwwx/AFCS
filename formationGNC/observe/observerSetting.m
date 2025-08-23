@@ -1,14 +1,14 @@
 function Observers = observerSetting(ShiNum)
-%OBSERVERSETTING  Initialize observer parameters for each ship.
+%OBSERVERSETTING  Initialize observer parameters for each ASV.
 %
 %   Observers = observerSetting(ShiNum)
-%   Returns a cell array of observer parameter structs for each ship in the fleet.
+%   Returns a cell array of observer parameter structs for each ASV in the fleet.
 %   This function currently supports the nonlinear disturbance observer described in:
 %     Yang et al., "A Trajectory Tracking Robust Controller of Surface Vessels With Disturbance Uncertainties,"
 %     IEEE Transactions on Industrial Electronics, 2019.
 %
 %   Inputs:
-%     ShiNum    - Number of ships (integer)
+%     ShiNum    - Number of ASVs (integer)
 %
 %   Outputs:
 %     Observers - 1×ShiNum cell array, each cell is a struct with fields:
@@ -25,7 +25,7 @@ function Observers = observerSetting(ShiNum)
 
 if ShiNum~=0
     Observers=cell(1,ShiNum);
-    %% ship{1}
+    %% ASV{1}
           Observers{1}.Name        = "DisObsYang"; % Only used for Fossen model
           Observers{1}.Nx          = 9;
           Observers{1}.Nu          = 3;
@@ -33,15 +33,15 @@ if ShiNum~=0
                                     1.7 0 0
                                     0 1.7 0
                                     0 0 1.7];
-    %% ship{2}
+    %% ASV{2}
 
     
     
-    %% ship{3}
+    %% ASV{3}
 
 
 
-    %% ship{4} 
+    %% ASV{4} 
     
 else
     Observers =[];
