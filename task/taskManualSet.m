@@ -6,7 +6,7 @@ function [task] = taskManualSet()
 %            and path/velocity targets for each phase.
 %
 %   Usage:
-%     Used to initialize ship formation scenarios (e.g., for formation MPC simulation).
+%     Used to initialize ASV formation scenarios (e.g., for formation MPC simulation).
 %
 %   Example:
 %     task = taskManualSet();
@@ -24,10 +24,10 @@ load('targetpath', 'xr');  % 'xr' is Nx2 or Nx3: [x, y, (optional) angle]
 % ------------------------------------------------------------------------
 task.name = ["PathFollowing", "Reconfiguration"];   % Task stages (e.g. path following, formation reconfiguration)
 task.time = [0, 160];                              % Start times for each stage (seconds, same units as simulation)
-% Geometry: [row = task index, col = ship]
-task.geometry.distances = [0, 6, 4.8, 6;           % Distance to virtual reference point for each ship
+% Geometry: [row = task index, col = ASV]
+task.geometry.distances = [0, 6, 4.8, 6;           % Distance to virtual reference point for each ASV
                            0, 6, 4.8, 6];
-task.geometry.angles    = [0, (1+0.20483277)*pi, pi, (1-0.20483277)*pi; % Relative angle for each ship (radians)
+task.geometry.angles    = [0, (1+0.20483277)*pi, pi, (1-0.20483277)*pi; % Relative angle for each ASV (radians)
                            0, (1-0.20483277)*pi, pi, (1+0.20483277)*pi];
 task.target{1}.path = xr(:,1:2);                   % Reference path for the first task (Nx2, [x y])
 task.target{1}.velocity = 0.2;                     % Reference velocity for the first stage
