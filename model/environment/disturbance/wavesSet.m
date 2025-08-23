@@ -1,20 +1,20 @@
-function Waves = wavesSet(ships,waves,nowStates,t)
-%WAVESSET   Compute wave-induced drift forces and moments for ship(s).
+function Waves = wavesSet(ASVs,waves,nowStates,t)
+%WAVESSET   Compute wave-induced drift forces and moments for ASV(s).
 %
-%   Waves = wavesSet(ships, waves, nowStates, t) calculates the wave drift 
-%   forces (surge, sway, yaw) acting on one or more ships using either a 
-%   regular or irregular wave model, based on ship parameters, present state, 
+%   Waves = wavesSet(ASVs, waves, nowStates, t) calculates the wave drift 
+%   forces (surge, sway, yaw) acting on one or more ASVs using either a 
+%   regular or irregular wave model, based on ASV parameters, present state, 
 %   and environmental wave conditions.
 %
 %   Inputs:
-%     ships      : Cell array of ship parameter structures (with .dynamics field)
+%     ASVs      : Cell array of ASV parameter structures (with .dynamics field)
 %     waves      : Structure with fields:
 %                   - type    : 'regular' or 'irregular'
 %                   - angle   : Wave propagation direction (rad)
 %                   - CounterM: Number of frequency components (irregular waves)
 %                   - rho     : Seawater density (kg/m^3)
 %                   - Vwimd   : Wind speed (m/s) [optional, used in Pierson-Moskowitz spectrum]
-%     nowStates  : [n_ships × state_dim] matrix, each row is the state vector of a ship
+%     nowStates  : [n_ASVs × state_dim] matrix, each row is the state vector of a ASV
 %                  (expected: [x, y, psi, u, v, r] or similar order)
 %     t          : Current simulation time (s)
 %
@@ -38,7 +38,7 @@ function Waves = wavesSet(ships,waves,nowStates,t)
 %   Date:   2025-02-25
 %
 %   Example usage:
-%     Waves = wavesSet(ships, waves, nowStates, t);
+%     Waves = wavesSet(ASVs, waves, nowStates, t);
 %
 if isempty(waves)
     waves_type='regular';
@@ -55,7 +55,7 @@ else
 end
 
 
-Waves=cell(1,length(ships));
+Waves=cell(1,length(ASVs));
 
 
 g=9.81;                                           % Gravitational acceleration  
@@ -71,8 +71,8 @@ wmax=(-3.11/(meanh^2*log(1-miu)))^(1/4);
 delta_w=(wmax-wmin)/CounterM;
 
 if strcmp(waves_type, 'regular')
-    for j=1:length(ships)
-        L=ships{j}.dynamics.L; 
+    for j=1:length(ASVs)
+        L=ASVs{j}.dynamics.L; 
         psi=nowStates(j,3);
         % Regular wave: use a single frequency (e.g., midpoint frequency)
         w = (wmin + wmax) / 2+10^(-9);            % Regular wave frequency
@@ -93,9 +93,9 @@ if strcmp(waves_type, 'regular')
         Waves{j}.frequency = w;
     end
 elseif strcmp(waves_type, 'irregular')
-    for j=1:length(ships)
+    for j=1:length(ASVs)
         Xwave=0;Ywave=0;Nwave=0;  
-        L=ships{j}.dynamics.L;                   % Ship length
+        L=ASVs{j}.dynamics.L;                   % ASV length
         psi=nowStates(j,3);                      % Heading angle
         % Wave drift forces and moments in irregular waves: superposition of multiple regular wave components with random frequencies
         for i=1:CounterM
