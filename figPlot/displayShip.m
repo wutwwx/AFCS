@@ -1,18 +1,18 @@
-function displayShip(shipName, dynamics, Number)
-%DISPLAYSHIP   Display information and an image for a given ship in a dedicated figure.
+function displayASV(ASVName, dynamics, Number)
+%DISPLAYASV   Display information and an image for a given ASV in a dedicated figure.
 %
-%   displayShip(shipName, dynamics, figNumber)
+%   displayASV(ASVName, dynamics, figNumber)
 %   Opens (or creates) figure window 'figNumber' and displays formatted information
-%   (length, beam, mass) along with a ship image, all within a fixed layout. Ensures
+%   (length, beam, mass) along with a ASV image, all within a fixed layout. Ensures
 %   no interference with other figures by using explicit axes parenting.
 %
 %   Inputs:
-%     shipName   - String ('Yunfan1', 'Cybership2', ...), ship model name.
-%     dynamics   - Struct with ship parameters (.L, .B, .mass, ...).
+%     ASVName   - String ('Yunfan1', 'Cybership2', ...), ASV model name.
+%     dynamics   - Struct with ASV parameters (.L, .B, .mass, ...).
 %     figNumber  - Integer, figure window number to use.
 %
 %   Example:
-%     displayShip('Cybership2', shipDynamics, 2)
+%     displayASV('Cybership2', ASVDynamics, 2)
 %
 %   Author: Haihong Wang (with ChatGPT enhancement)
 %   Date:   2025-02-19
@@ -20,10 +20,10 @@ function displayShip(shipName, dynamics, Number)
     % Create or activate the designated figure, then clear it
     hFig = figure(Number);
     clf(hFig);
-    set(hFig, 'NumberTitle','off', 'Name',sprintf('Ship %d: %s', Number, shipName));
+    set(hFig, 'NumberTitle','off', 'Name',sprintf('ASV %d: %s', Number, ASVName));
     
     % Title and image file selection
-    switch shipName
+    switch ASVName
         case "Yunfan1"
             Heading = sprintf('%-30s\n%-30s\n',  'Yunfan1');
             imageFile='yunfan1.jpg';
@@ -31,14 +31,14 @@ function displayShip(shipName, dynamics, Number)
             Heading = sprintf('%-30s\n%-30s\n',  'Cybership2');
             imageFile='cyberShip2.png';
         otherwise
-            error("No image for " + shipName);
+            error("No image for " + ASVName);
     end
 
-    % Ship data formatting
-    shipData= {'Length (m)', dynamics.L, 'Beam (m)', dynamics.B, 'Mass (kg)', dynamics.mass};
-    numEntries = length(shipData)/2;
+    % ASV data formatting
+    ASVData= {'Length (m)', dynamics.L, 'Beam (m)', dynamics.B, 'Mass (kg)', dynamics.mass};
+    numEntries = length(ASVData)/2;
     formatSpec = repmat('%-20s : %-10.2f\n', 1, numEntries);
-    Ship_text = sprintf(formatSpec, shipData{:});
+    ASV_text = sprintf(formatSpec, ASVData{:});
     
     % Create axes and plot all content on hFig ONLY
     axTitle = axes('Parent', hFig, 'Position', [0.1 0.8 0.8 0.1]);
@@ -48,7 +48,7 @@ function displayShip(shipName, dynamics, Number)
     axis(axTitle, 'off');
     
     axData = axes('Parent', hFig, 'Position', [0.1 0.53 0.8 0.3]);
-    text(0, 1, Ship_text, ...
+    text(0, 1, ASV_text, ...
         'FontSize', 16, 'FontName', 'Courier', ...
         'HorizontalAlignment', 'left', 'VerticalAlignment', 'top', ...
         'Parent', axData);
