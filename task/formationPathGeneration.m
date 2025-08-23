@@ -2,7 +2,7 @@ clear all
 close all
 
 % =========================================================================
-% Generate a Custom U-Shaped Path for Multi-Ship Formation Task
+% Generate a Custom U-Shaped Path for Multi-ASV Formation Task
 % =========================================================================
 % This script creates a composite path consisting of:
 %   - A straight line segment
