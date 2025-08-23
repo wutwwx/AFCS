@@ -1,31 +1,31 @@
- function [h1] = shipDisplay3(theta,xShip,yShip,zShip,scale,color)
-%SHIPDISPLAY3  Plot a stylized ship icon at a given pose in 2D/3D.
+ function [h1] = ASVDisplay3(theta,xASV,yASV,zASV,scale,color)
+%ASVDISPLAY3  Plot a stylized ASV icon at a given pose in 2D/3D.
 %
-%   h1 = shipDisplay3(theta, xShip, yShip, zShip, scale, color)
-%   draws a "ship" shape at position (xShip, yShip, zShip), heading theta(1), 
-%   and scale. The ship is shown as a 3D patch object with optional color.
+%   h1 = ASVDisplay3(theta, xASV, yASV, zASV, scale, color)
+%   draws a "ASV" shape at position (xASV, yASV, zASV), heading theta(1), 
+%   and scale. The ASV is shown as a 3D patch object with optional color.
 %
 %   Inputs:
-%     theta   - 1°¡3 vector [yaw, pitch, roll] (rad), ship orientation; 
+%     theta   - 1¬°√Å3 vector [yaw, pitch, roll] (rad), ASV orientation; 
 %               theta(1): heading (z), theta(2): pitch (y), theta(3): roll (x)
-%     xShip   - X position of ship center
-%     yShip   - Y position of ship center
-%     zShip   - Z position (default 0 if empty)
-%     scale   - Scalar for ship size (default 1 if empty)
-%     color   - 1°¡3 RGB vector for ship color
+%     xASV   - X position of ASV center
+%     yASV   - Y position of ASV center
+%     zASV   - Z position (default 0 if empty)
+%     scale   - Scalar for ASV size (default 1 if empty)
+%     color   - 1¬°√Å3 RGB vector for ASV color
 %
 %   Output:
-%     h1      - Handle to the filled patch object representing the ship
+%     h1      - Handle to the filled patch object representing the ASV
 %
 %   Usage Example:
-%     h = shipDisplay3([pi/2 0 0], 10, 10, 0, 1, [0.2 0.6 1]);
+%     h = ASVDisplay3([pi/2 0 0], 10, 10, 0, 1, [0.2 0.6 1]);
 %
 %   Author: Zhibo He 
 %   Date:   2025-04-11
 
 theta=theta*180/pi;
-if isempty(zShip)
-    zShip=0;
+if isempty(zASV)
+    zASV=0;
 end
 if isempty(scale)
     scale=1;
@@ -57,7 +57,7 @@ theta(1) =90-theta(1);
     xy          = [xy,z];
     xy          = xy*matrot_y*matrot_x*matrot_z;
 
-    h1=fill3(xy(:,1)+xShip,xy(:,2)+yShip,xy(:,3)+zShip,color);% display the ship picture
-    set(h1,'FaceAlpha',1);% Draw a white ship, then overlay another on top  
+    h1=fill3(xy(:,1)+xASV,xy(:,2)+yASV,xy(:,3)+zASV,color);% display the ASV picture
+    set(h1,'FaceAlpha',1);% Draw a white ASV, then overlay another on top  
 
 end
