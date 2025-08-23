@@ -1,21 +1,21 @@
 function controlInputPlot(SystemStates, N, colors)
-%CONTROLINPUTPLOT  Plot control inputs of multiple ships over simulation steps.
+%CONTROLINPUTPLOT  Plot control inputs of multiple ASVs over simulation steps.
 %
 %   controlInputPlot(SystemStates, N, colors) visualizes the time-series control
-%   commands (inputs) applied to each ship/ASV/USV over the simulation duration.
+%   commands (inputs) applied to each ASV/USV over the simulation duration.
 %
 %   Inputs:
-%     SystemStates : cell array, each cell contains states and control inputs for a ship.
+%     SystemStates : cell array, each cell contains states and control inputs for a ASV.
 %                    SystemStates{j}.commands is an [N × nU] matrix of control variables.
 %                    nU = number of control variables (e.g. 3 for Fossen, 2 for MMG).
 %     N            : scalar, number of simulation time steps to plot.
-%     colors       : struct, must include field .ship, a cell array of RGB row vectors
-%                    or color codes for each ship (e.g., colors.ship{j} = [r g b]).
+%     colors       : struct, must include field .ASV, a cell array of RGB row vectors
+%                    or color codes for each ASV (e.g., colors.ASV{j} = [r g b]).
 %
 %   Description:
-%     - Supports arbitrary number of ships and any number of control variables.
+%     - Supports arbitrary number of ASVs and any number of control variables.
 %     - Variable naming is automatic for common marine models (Fossen, MMG, etc).
-%     - Line styles are cycled to distinguish different ships.
+%     - Line styles are cycled to distinguish different ASVs.
 %     - Each subplot shows the evolution of a single control variable.
 %
 %   Example:
@@ -29,12 +29,12 @@ function controlInputPlot(SystemStates, N, colors)
 %   Author: Wenxiang Wu (with ChatGPT enhancement)
 %   Date:   2025-06-20
 
-ShipNum = length(SystemStates);
-for j= 1:ShipNum
+ASVNum = length(SystemStates);
+for j= 1:ASVNum
     U{j}=SystemStates{j}.commands;
 end
 
-ShipNum = length(U);
+ASVNum = length(U);
 nU = size(U{1},2); % number of the control variables
 % the names of the control variables, which can be customized according to actual needs.
 if nU==3
@@ -44,17 +44,17 @@ elseif nU==2
 else
     uNames = arrayfun(@(k) ['u_', num2str(k)], 1:nU, 'UniformOutput', false);
 end
-linestyles = {'-', '--', ':', '-.'}; % separation between ships
+linestyles = {'-', '--', ':', '-.'}; % separation between ASVs
 
 figure('Name', 'Control Inputs', 'Color', 'w');
 for k = 1:nU
     subplot(nU,1,k); hold on; box on; grid on;
-    for j = 1:ShipNum
+    for j = 1:ASVNum
         plot(1:N, U{j}(1:N, k), ...
-            'Color', colors.ship{j}, ...
+            'Color', colors.ASV{j}, ...
             'LineStyle', linestyles{mod(j-1,length(linestyles))+1}, ...
             'LineWidth', 2, ...
-            'DisplayName', ['Ship ', num2str(j)]);
+            'DisplayName', ['ASV ', num2str(j)]);
     end
     ylabel(uNames{k}, 'FontName', 'Times New Roman');
     set(gca, 'FontName', 'Times New Roman');
