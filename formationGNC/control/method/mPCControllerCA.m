@@ -1,27 +1,27 @@
-function Prediction=mPCControllerCA(conInputs,controlStates,EnvironStates,commandLast,xd,ship,Ts,st) %xd includes the target point at the current time step  
-%MPCONTROLLERCA  Nonlinear MPC with Collision Avoidance for Multi-Ship/USV System.
+function Prediction=mPCControllerCA(conInputs,controlStates,EnvironStates,commandLast,xd,ASV,Ts,st) %xd includes the target point at the current time step  
+%MPCONTROLLERCA  Nonlinear MPC with Collision Avoidance for Multi-ASV/USV System.
 %
 %   Prediction = mPCControllerCA(conInputs, controlStates, EnvironStates, ...
-%                                commandLast, xd, ship, Ts, st)
+%                                commandLast, xd, ASV, Ts, st)
 %   computes the optimal control action using nonlinear MPC with collision
 %   avoidance constraints, handling static obstacles, dynamic obstacles,
-%   and internal coordination (e.g., formation inter-ship avoidance).
+%   and internal coordination (e.g., formation inter-ASV avoidance).
 %
 %   Inputs:
-%     conInputs     - Struct, current state info for this ship
+%     conInputs     - Struct, current state info for this ASV
 %                      .statesNow : [1×nx] current state
 %                      .UnDis     : [1×3] unknown disturbance (optional)
 %                      .current   : [1×3] current disturbance (optional)
-%     controlStates - Cell array, other ships' predicted trajectories (for formation avoidance)
+%     controlStates - Cell array, other ASVs' predicted trajectories (for formation avoidance)
 %     EnvironStates - Struct, environmental states
 %                       .staticObs         : cell, static obstacle info
 %                       .manual_dynamic.TS : cell, dynamic obstacle trajectories
 %                       .manual_dynamic.R  : [1×Ndyn], radii for dynamic obstacles
 %     commandLast   - [1×Nu], previous control input (for warm start, can be empty)
 %     xd            -  reference trajectory (first row is current ref)
-%     ship          - Struct, contains:
+%     ASV          - Struct, contains:
 %                        .controller : MPC tuning parameters (Q, R, G, Np, Nc, Nu, etc.)
-%                        .dynamics   : Ship dynamic parameters/model
+%                        .dynamics   : ASV dynamic parameters/model
 %     Ts            - Scalar, sampling time [s]
 %     st            - Integer, current global time step (for indexing into dynamic obs)
 %
@@ -34,7 +34,7 @@ function Prediction=mPCControllerCA(conInputs,controlStates,EnvironStates,comman
 %
 %   Usage Example:
 %     Prediction = mPCControllerCA(conInputs, controlStates, EnvironStates, ...
-%                                  commandLast, xd, ship, Ts, st)
+%                                  commandLast, xd, ASV, Ts, st)
 %
 %   Reference:
 %     [1] Wen G, Lam J, Fu J, Wang S.
@@ -57,8 +57,8 @@ else
     disturbance.current=conInputs.current;
 end
 
-para=ship.controller;
-dynamics=ship.dynamics;
+para=ASV.controller;
+dynamics=ASV.dynamics;
 if size(xd,1)==1
     xd=[zeros(1,size(xd,2));xd];
 end
