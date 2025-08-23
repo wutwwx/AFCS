@@ -1,21 +1,21 @@
-function Prediction=mPCController(conInputs,commandLast,xd,ship,Ts)% xd includes the target point at the current time step 
-%MPCONTROLLER  Nonlinear Model Predictive Controller for Ship Tracking.
+function Prediction=mPCController(conInputs,commandLast,xd,ASV,Ts)% xd includes the target point at the current time step 
+%MPCONTROLLER  Nonlinear Model Predictive Controller for ASV Tracking.
 %
-%   Prediction = mPCController(conInputs, commandLast, xd, ship, Ts)
-%   computes the optimal control command for a ship based on nonlinear MPC.
+%   Prediction = mPCController(conInputs, commandLast, xd, ASV, Ts)
+%   computes the optimal control command for a ASV based on nonlinear MPC.
 %   The controller tracks a given reference trajectory and handles constraints
 %   on input, speed, and disturbance effects (e.g., current, unmodeled forces).
 %
 %   Inputs:
 %     conInputs    - Struct with fields:
-%                      .statesNow : [1×nx] current ship state
+%                      .statesNow : [1×nx] current ASV state
 %                      .UnDis     : [1×3] (optional) unknown disturbances (default zeros)
 %                      .current   : [1×3] (optional) current velocity/disturbance (default zeros)
 %     commandLast  - [1×Nu] previous control command for warm start (can be empty)
 %     xd           -  reference trajectory (first row is current ref)
-%     ship         - Struct with fields:
+%     ASV         - Struct with fields:
 %                      .controller : MPC parameter struct (fields: Q, R, G, Np, Nc, Nu)
-%                      .dynamics   : Ship dynamic model struct (fields: MinInputs, MaxInputs, etc.)
+%                      .dynamics   : ASV dynamic model struct (fields: MinInputs, MaxInputs, etc.)
 %     Ts           - Scalar, sampling time (in seconds)
 %
 %   Outputs:
@@ -26,7 +26,7 @@ function Prediction=mPCController(conInputs,commandLast,xd,ship,Ts)% xd includes
 %                      .preNextStates    : [1×nx] predicted state at t+1
 %
 %   Usage Example:
-%     Prediction = mPCController(conInputs, commandLast, xd, ship, Ts);
+%     Prediction = mPCController(conInputs, commandLast, xd, ASV, Ts);
 %
 %   Author: Wenxiang Wu
 %   Date:   2025-05-11
@@ -44,8 +44,8 @@ else
     disturbance.current=conInputs.current;
 end
 
-para=ship.controller;
-dynamics=ship.dynamics;
+para=ASV.controller;
+dynamics=ASV.dynamics;
 if size(xd,1)==1
     xd=[zeros(1,size(xd,2));xd];
 end
