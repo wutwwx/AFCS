@@ -14,7 +14,7 @@ T=170;
 Ts=1;
 current=zeros(T,3);
 dw=zeros(T,3);
-dynamics   = createShip("Cybership2"); 
+dynamics   = createASV("Cybership2"); 
 x0= [0,0,0,0,0,0]; % x y psi u v r initial state 
  
 
@@ -74,9 +74,9 @@ figure(1)
 hold on
 plot(xr(1:plot_num,2), xr(1:plot_num,1), '-','Color',[0, 0, 0]/255, 'LineWidth', 2);% actual trajectory  
 for i=1:floor(plot_num/plot_step)
-    shipDisplay3([xr(1+(i-1)*(plot_step),3),0,0],xr(1+(i-1)*plot_step,2),xr(1+(i-1)*plot_step,1),[],[],color1);   
+    ASVDisplay3([xr(1+(i-1)*(plot_step),3),0,0],xr(1+(i-1)*plot_step,2),xr(1+(i-1)*plot_step,1),[],[],color1);   
 end
-shipDisplay3([xr(plot_num,3),0,0],xr(plot_num,2),xr(plot_num,1),[],[],color1);  
+ASVDisplay3([xr(plot_num,3),0,0],xr(plot_num,2),xr(plot_num,1),[],[],color1);  
 axis equal
 ylim ( [-1 14]);
 
