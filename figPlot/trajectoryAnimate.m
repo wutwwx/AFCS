@@ -1,13 +1,13 @@
 function trajectoryAnimate(TarTra, SystemStates, N, EnvironStates, plotParas)
-%TRAJECTORYANIMATE  Animate tracking performance for each ship in the formation.
+%TRAJECTORYANIMATE  Animate tracking performance for each ASV in the formation.
 %
 %   trajectoryAnimate(TarTra, SystemStates, N, EnvironStates, plotParas)
-%   animates (in separate figures for each ship) the target and actual trajectory
-%   tracking process, overlaying static and dynamic obstacles as well as ship icons.
+%   animates (in separate figures for each ASV) the target and actual trajectory
+%   tracking process, overlaying static and dynamic obstacles as well as ASV icons.
 %
 %   Inputs:
-%     TarTra        - Cell array, TarTra{j} [N×3], target trajectory for each ship
-%     SystemStates  - Cell array, SystemStates{j}.realStates [N×3], actual state for each ship
+%     TarTra        - Cell array, TarTra{j} [N×3], target trajectory for each ASV
+%     SystemStates  - Cell array, SystemStates{j}.realStates [N×3], actual state for each ASV
 %     N             - Integer, total number of time steps to animate
 %     EnvironStates - Struct, contains environment info (staticObs, manual_dynamic, etc.)
 %     plotParas     - Struct, plotting parameters (colors, animateSpeed, animateInterval)
@@ -21,12 +21,12 @@ function trajectoryAnimate(TarTra, SystemStates, N, EnvironStates, plotParas)
 animateSpeed = plotParas.animateSpeed;
 colors = plotParas.colors;
 animateInterval = plotParas.animateInterval;
-ShipNum = length(SystemStates);
+ASVNum = length(SystemStates);
 
 % === Automatically compute plot boundaries, ignoring dynamic obstacles ===  
 x_all = [];
 y_all = [];
-for j = 1:ShipNum
+for j = 1:ASVNum
     x_all = [x_all; SystemStates{j}.realStates(1:N,1); TarTra{j}(1:N,1)];
     y_all = [y_all; SystemStates{j}.realStates(1:N,2); TarTra{j}(1:N,2)];
 end
@@ -42,7 +42,7 @@ axisLimit.xmax = max(y_all) + margin;
 axisLimit.ymin = min(x_all) - margin;
 axisLimit.ymax = max(x_all) + margin;
 
-for j = 1:ShipNum
+for j = 1:ASVNum
     xi{j} = SystemStates{j}.realStates;
     xd{j} = TarTra{j};
     figure; hold on; axis equal; box on; grid on;
@@ -63,17 +63,17 @@ for j = 1:ShipNum
     Ndyn = 0;
     if isfield(EnvironStates, "manual_dynamic") && isfield(EnvironStates.manual_dynamic, "TS") ...
             && isfield(colors, "dynObs") && ~isempty(colors.dynObs)
-        dynShips = EnvironStates.manual_dynamic.TS;
-        Ndyn = numel(dynShips);
-        Tmax_dyn = size(dynShips{1}.Pos, 1);
+        dynASVs = EnvironStates.manual_dynamic.TS;
+        Ndyn = numel(dynASVs);
+        Tmax_dyn = size(dynASVs{1}.Pos, 1);
     else
         Tmax_dyn = 0;
     end
 
     % ==== 3. Initialize Handles ====  
     h_tar = plot(nan, nan, 'k-', 'LineWidth', 2, 'DisplayName', 'Target Trajectory');
-    h_real = plot(nan, nan, '--', 'Color', colors.ship{j}, 'LineWidth', 2, 'DisplayName', 'Actual Trajectory');
-    h_ship = [];
+    h_real = plot(nan, nan, '--', 'Color', colors.ASV{j}, 'LineWidth', 2, 'DisplayName', 'Actual Trajectory');
+    h_ASV = [];
     h_dyn = gobjects(Ndyn, 1);
     h_dyntraj = gobjects(Ndyn, 1);
     for k = 1:Ndyn
@@ -84,26 +84,26 @@ for j = 1:ShipNum
     % ==== 4. Main Animation Loop ====  
     maxStep = min(N, Tmax_dyn); if Tmax_dyn == 0, maxStep = N; end
     for t = 1:animateInterval:maxStep
-        title({['Ship ', num2str(j), ' Tracking Animation'], ...
+        title({['ASV ', num2str(j), ' Tracking Animation'], ...
                ['Step: ', num2str(t), ' / ', num2str(maxStep)]});
         % Target Trajectory  
         set(h_tar, 'XData', xd{j}(1:t,2), 'YData', xd{j}(1:t,1));
         % Actual Trajectory  
         set(h_real, 'XData', xi{j}(1:t,2), 'YData', xi{j}(1:t,1));
-        % Ship Icons  
-        if isgraphics(h_ship), delete(h_ship); end
+        % ASV Icons  
+        if isgraphics(h_ASV), delete(h_ASV); end
         psi = xi{j}(t,3);
-        h_ship = shipDisplay3([psi 0 0], xi{j}(t,2), xi{j}(t,1), 0, 0.7, colors.ship{j});
+        h_ASV = ASVDisplay3([psi 0 0], xi{j}(t,2), xi{j}(t,1), 0, 0.7, colors.ASV{j});
 
         % Dynamic Obstacles
         for k = 1:Ndyn
-            t_dyn = min(t, size(dynShips{k}.Pos,1));
-            xHist = dynShips{k}.Pos(1:t_dyn,2);
-            yHist = dynShips{k}.Pos(1:t_dyn,1);
+            t_dyn = min(t, size(dynASVs{k}.Pos,1));
+            xHist = dynASVs{k}.Pos(1:t_dyn,2);
+            yHist = dynASVs{k}.Pos(1:t_dyn,1);
             set(h_dyntraj(k), 'XData', xHist, 'YData', yHist);
             if isgraphics(h_dyn(k)), delete(h_dyn(k)); end
-            psi_dyn = dynShips{k}.Hdg(t_dyn);
-            h_dyn(k) = shipDisplay3([psi_dyn 0 0], dynShips{k}.Pos(t_dyn,2), dynShips{k}.Pos(t_dyn,1), 0, 0.7, colors.dynObs(k,:));
+            psi_dyn = dynASVs{k}.Hdg(t_dyn);
+            h_dyn(k) = ASVDisplay3([psi_dyn 0 0], dynASVs{k}.Pos(t_dyn,2), dynASVs{k}.Pos(t_dyn,1), 0, 0.7, colors.dynObs(k,:));
         end
 
         pause(animateSpeed); drawnow;
