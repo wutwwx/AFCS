@@ -2,7 +2,7 @@ function dataUpdate = systemUpdate(conditions)
 %SYSTEMUPDATE  Selects the system state update function handle based on environment/fault conditions.
 %
 %   dataUpdate = systemUpdate(conditions)
-%   Returns a function handle for updating ship/environment states, automatically selecting the appropriate
+%   Returns a function handle for updating ASV/environment states, automatically selecting the appropriate
 %   update logic based on the scenario (e.g., with or without unknown disturbances, faults, etc.).
 %
 %   Inputs:
