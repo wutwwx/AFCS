@@ -78,10 +78,10 @@ if ~isempty(obsTypes)
             env.manual_dynamic.TS{j}.Pos = traj;
             env.manual_dynamic.TS{j}.Spd = spdHist;
             env.manual_dynamic.TS{j}.Hdg = hdgHist;
-            env.manual_dynamic.R(1,j) = 0.5*dynStates{j}.ship_len;
+            env.manual_dynamic.R(1,j) = 0.5*dynStates{j}.ASV_len;
             p0 = traj(1, :);  pN = traj(end, :);
             dynSegs = [dynSegs; p0 pN]; %#ok<AGROW>
-            dynSafeR = [dynSafeR, 0.5*dynStates{j}.ship_len];
+            dynSafeR = [dynSafeR, 0.5*dynStates{j}.ASV_len];
         end
     end
 
@@ -151,14 +151,14 @@ if ~isempty(obsTypes)
 
     % ========== Dynamic obstacle animation ==========
     if ismember("manual_dynamic", obsTypes) && doPlot
-        dynShips = env.manual_dynamic.TS;
-        Nship = numel(dynShips);
-        Tmax = size(dynShips{1}.Pos,1);
+        dynASVs = env.manual_dynamic.TS;
+        NASV = numel(dynASVs);
+        Tmax = size(dynASVs{1}.Pos,1);
 
-        trajHandles = gobjects(Nship,1);
-        shipHandles = gobjects(Nship,1);
-        for j = 1:Nship
-            posHist = dynShips{j}.Pos(1, :);
+        trajHandles = gobjects(NASV,1);
+        ASVHandles = gobjects(NASV,1);
+        for j = 1:NASV
+            posHist = dynASVs{j}.Pos(1, :);
             trajHandles(j) = plot(posHist(2), posHist(1), '-', 'Color', [0 0 1]*0.7, 'LineWidth', 1.5);
         end
 
@@ -167,21 +167,21 @@ if ~isempty(obsTypes)
         frameIdx = unique(round(linspace(1, Tmax, min(maxFrames,Tmax))));
         for t = frameIdx
             % Draw trajectory
-            for j = 1:Nship
-                xHist = dynShips{j}.Pos(1:t, 2);
-                yHist = dynShips{j}.Pos(1:t, 1);
+            for j = 1:NASV
+                xHist = dynASVs{j}.Pos(1:t, 2);
+                yHist = dynASVs{j}.Pos(1:t, 1);
                 set(trajHandles(j), 'XData', xHist, 'YData', yHist);
             end
-            % Draw ship shape
-            for j = 1:Nship
-                if isgraphics(shipHandles(j)), delete(shipHandles(j)); end
+            % Draw ASV shape
+            for j = 1:NASV
+                if isgraphics(ASVHandles(j)), delete(ASVHandles(j)); end
             end
-            for j = 1:Nship
-                pos = dynShips{j}.Pos(t,:);
-                hdg = dynShips{j}.Hdg(t);
+            for j = 1:NASV
+                pos = dynASVs{j}.Pos(t,:);
+                hdg = dynASVs{j}.Hdg(t);
                 theta = [hdg 0 0];
                 scale = 0.8; color = [0.0 0.5 1];
-                shipHandles(j) = shipDisplay3(theta, pos(2), pos(1), 0, scale, color);
+                ASVHandles(j) = ASVDisplay3(theta, pos(2), pos(1), 0, scale, color);
             end
             drawnow limitrate;
             pause(pause_time);
