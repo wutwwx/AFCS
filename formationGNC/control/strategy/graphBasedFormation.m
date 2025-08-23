@@ -1,28 +1,28 @@
-function xd = graphBasedFormation(Trajectory,inputStates, A, Ship_num, task, taskNowNum,leaderNums)
+function xd = graphBasedFormation(Trajectory,inputStates, A, ASV_num, task, taskNowNum,leaderNums)
 %GRAPHBASEDFORMATION  Graph-theoretic distributed formation trajectory generation.
 %
-%   xd = graphBasedFormation(Trajectory, inputStates, A, Ship_num, task, taskNowNum, leaderNums)
-%   computes the expected reference trajectory for each ship at the current time step,
+%   xd = graphBasedFormation(Trajectory, inputStates, A, ASV_num, task, taskNowNum, leaderNums)
+%   computes the expected reference trajectory for each ASV at the current time step,
 %   based on a graph structure (adjacency matrix), formation geometry, and neighbor fusion.
 %   This supports decentralized distributed formation following, leader/follower switching,
 %   and multiple communication topologies.
 %
 %   Inputs:
 %     Trajectory  - [T×3] array, global formation reference trajectory (center or leader trajectory)
-%     inputStates - cell array, {Ship_num}, each is [K×6/8/...] actual state history of each ship (usually up to current step)
-%     A           - [Ship_num×Ship_num] adjacency matrix (A(i,j)=1: i can receive from j)
-%     Ship_num    - integer, total number of ships in formation
+%     inputStates - cell array, {ASV_num}, each is [K×6/8/...] actual state history of each ASV (usually up to current step)
+%     A           - [ASV_num×ASV_num] adjacency matrix (A(i,j)=1: i can receive from j)
+%     ASV_num    - integer, total number of ASVs in formation
 %     task        - struct, scenario description (fields: .geometry.distances, .geometry.angles, etc.)
 %     taskNowNum  - integer, current task index
-%     leaderNums  - vector, indices of leader ships for current task (from strategy.GB.leaderNums)
+%     leaderNums  - vector, indices of leader ASVs for current task (from strategy.GB.leaderNums)
 %
 %   Outputs:
-%     xd          - cell array, {Ship_num+1}, 
+%     xd          - cell array, {ASV_num+1}, 
 %                     xd{1}: global trajectory (copy of Trajectory),
-%                     xd{j+1}: reference trajectory for each member ship (j = 1...Ship_num)
+%                     xd{j+1}: reference trajectory for each member ASV (j = 1...ASV_num)
 %
 %   Usage Example:
-%     xd = graphBasedFormation(Trajectory, inputStates, A, Ship_num, task, taskNowNum, leaderNums);
+%     xd = graphBasedFormation(Trajectory, inputStates, A, ASV_num, task, taskNowNum, leaderNums);
 %
 %   Reference:
 %     [1] Park BS, Yoo SJ.
@@ -35,7 +35,7 @@ function xd = graphBasedFormation(Trajectory,inputStates, A, Ship_num, task, tas
     xd{1} = Trajectory;
     leaders=leaderNums(taskNowNum,:);
     theta{1}=tangentAngleCalculate(xd{1});
-    for j=1:Ship_num
+    for j=1:ASV_num
         for i=1:size(inputStates{j},1)
             u_e{j}(i,1)=inputStates{j}(i,4)*cos(inputStates{j}(i,3))-inputStates{j}(i,5)*sin(inputStates{j}(i,3));
             v_e{j}(i,1)=inputStates{j}(i,4)*sin(inputStates{j}(i,3))+inputStates{j}(i,5)*cos(inputStates{j}(i,3));
@@ -49,10 +49,10 @@ function xd = graphBasedFormation(Trajectory,inputStates, A, Ship_num, task, tas
         d_a(1,j)=task.geometry.distances(taskNowNum, j);
         a_a(1,j)=task.geometry.angles(taskNowNum, j);
     end
-    for j=1:Ship_num
+    for j=1:ASV_num
         neighbors = find(A(j, :) ~= 0);  
         if isempty(neighbors)
-            error(['Ship ', num2str(j), ' has no neighbor in adjacency graph.']);
+            error(['ASV ', num2str(j), ' has no neighbor in adjacency graph.']);
         end
         for i = neighbors
             x2 = task.geometry.distances(taskNowNum, i);
@@ -63,7 +63,7 @@ function xd = graphBasedFormation(Trajectory,inputStates, A, Ship_num, task, tas
         end
     end
 
-    for j = 1:Ship_num
+    for j = 1:ASV_num
         if ismember(j,leaders)
             for i=1:size(Trajectory,1)
                 xd{j+1}(i,1)=xd{1}(i,1)+d_a(1,j)*cos(theta{1}(i,1)+a_a(1,j));
