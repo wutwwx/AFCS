@@ -1,22 +1,22 @@
-function xd = virtualStructure(Trajectory,Ship_num,task,taskNowNum)
+function xd = virtualStructure(Trajectory,ASV_num,task,taskNowNum)
 %VIRTUALSTRUCTURE  Virtual Structure formation reference trajectory generation.
 %
-%   xd = virtualStructure(Trajectory, Ship_num, task, taskNowNum)
-%   generates reference trajectories for all ships in the formation using the
-%   virtual structure method, where all ships maintain a fixed geometric relation
+%   xd = virtualStructure(Trajectory, ASV_num, task, taskNowNum)
+%   generates reference trajectories for all ASVs in the formation using the
+%   virtual structure method, where all ASVs maintain a fixed geometric relation
 %   to the formation center. The orientation at each point is given by the path tangent.
 %
 %   Inputs:
 %     Trajectory    - [T×3] matrix, reference trajectory for the formation center
-%     Ship_num      - Integer, number of ships in the formation
+%     ASV_num      - Integer, number of ASVs in the formation
 %     task          - Struct, task/geometry configuration (contains geometry.distances, geometry.angles)
 %     taskNowNum    - Integer, current task index
 %
 %   Outputs:
-%     xd            - Cell array, {Ship_num+1}, xd{1} is the center (global), xd{j+1} is ship j’s trajectory
+%     xd            - Cell array, {ASV_num+1}, xd{1} is the center (global), xd{j+1} is ASV j’s trajectory
 %
 %   Usage Example:
-%     xd = virtualStructure(Trajectory, Ship_num, task, taskNowNum);
+%     xd = virtualStructure(Trajectory, ASV_num, task, taskNowNum);
 %
 %   Reference:
 %     [1] Lewis MA, Tan KH.
@@ -28,9 +28,9 @@ function xd = virtualStructure(Trajectory,Ship_num,task,taskNowNum)
 
     xd{1}=Trajectory;
     theta{1}=tangentAngleCalculate(xd{1});            
-    for j=1:Ship_num
-        distances(1,j)=task.geometry.distances(taskNowNum,j);% Calculate the distance from the reference ship.
-        angles(1,j)=task.geometry.angles(taskNowNum,j); % Calculate the angle relative to the reference ship.
+    for j=1:ASV_num
+        distances(1,j)=task.geometry.distances(taskNowNum,j);% Calculate the distance from the reference ASV.
+        angles(1,j)=task.geometry.angles(taskNowNum,j); % Calculate the angle relative to the reference ASV.
         for i=1:size(Trajectory,1)
             xd{j+1}(i,1)=xd{1}(i,1)+distances(1,j)*cos(theta{1}(i,1)+angles(1,j));
             xd{j+1}(i,2)=xd{1}(i,2)+distances(1,j)*sin(theta{1}(i,1)+angles(1,j));
