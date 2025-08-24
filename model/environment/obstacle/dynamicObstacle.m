@@ -19,7 +19,7 @@ function dynStates = dynamicObstacle(Sim_step, period)
 %   Description:
 %     - Each dynamic obstacle is initialized with speed, course, and position.
 %     - The trajectory is updated at each step assuming constant control input (here: constant speed/course).
-%     - Uses the ClassASV object for state management and history recording.
+%     - Uses the classASV object for state management and history recording.
 %     - Trajectories can be used for scenario-based path planning, collision avoidance, and multi-agent simulation.
 %
 %   Author: Huimin Chen
@@ -48,7 +48,7 @@ function dynStates = dynamicObstacle(Sim_step, period)
 
     % Initialize histories: position, speed, and heading
     for i = 1:N
-        ASV{i} = ClassASV(initStates{i});
+        ASV{i} = classASV(initStates{i});
         paths{i}   = ASV{i}.position;   % initial position
         spdHist{i} = ASV{i}.speed;      % initial speed
         hdgHist{i} = ASV{i}.course;     % initial heading
