@@ -1,4 +1,4 @@
-%CLASSASV   ASV object class for kinematic simulation and path tracking.
+%classASV   ASV object class for kinematic simulation and path tracking.
 %
 %   This class defines a simple ASV model for use in multi-vessel 
 %   navigation, encounter, and path tracking simulations. Each ASV 
@@ -22,20 +22,20 @@
 %     speeds      : History of speed [n×1]
 %
 %   Methods:
-%     ClassASV          : Constructor. Initializes with input vector.
+%     classASV          : Constructor. Initializes with input vector.
 %     ChangePosition     : Increment position by delta.
 %     MoveToNewPosition  : Move to absolute position (optionally set course).
 %     ChangeCourse       : Update course angle.
 %     EncounterSituation : Set encounter situation code.
 %
 %   Usage:
-%     ASV = ClassASV([speed, course, length, yEast, xNorth]);
+%     ASV = classASV([speed, course, length, yEast, xNorth]);
 %     ASV = ASV.ChangePosition([dy, dx]);
 %     ASV = ASV.MoveToNewPosition([yNew, xNew, courseNew]);
 %
 %   Author: Zhibo He
 %   Date:   2025-03-01
-classdef ClassASV < handle
+classdef classASV < handle
     % This is a class named ASV, only consists of speed
     % course, length, position
     properties
@@ -54,7 +54,7 @@ classdef ClassASV < handle
     end
 
     methods
-        function obj = ClassASV(InputMat)
+        function obj = classASV(InputMat)
             obj.speed    = InputMat(1);
             obj.course   = InputMat(2);
             obj.length   = InputMat(3);
