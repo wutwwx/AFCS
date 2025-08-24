@@ -9,7 +9,7 @@
 % Date:   2025-06-19
 
 % Locate directories named 'AFCS' using the MATLAB 'what' function
-AFCSInfo = what('AFCS');
+AFCSInfo = what('AFCS-main');
 
 % Check if any 'AFCS' directories were found
 if isempty(AFCSInfo)
