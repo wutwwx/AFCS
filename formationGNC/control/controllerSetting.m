@@ -19,7 +19,7 @@ function Controllers = controllerSetting(ASVs)
 %   Date:   2025-05-11
 
 Controllers=cell(1,length(ASVs));
-%% CyberASV2
+%% Cybership2
 % ASV{1}
     Controllers{1}.Name        = "MPCCA";   
     Controllers{1}.Fre         = 1;                                                    % control frequency
